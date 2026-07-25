@@ -34,7 +34,7 @@ const rateLimiter = rateLimit({
     standardHeaders: 'draft-8', 
     legacyHeaders: false, 
     ipv6Subnet: 56,
-    message: { error: 'Too many requests, please try again later.' }
+    message: { error: 'Too many requests, please try again later' }
 });
 
 // 3. Apply them to your app (ORDER IS CRITICAL)
