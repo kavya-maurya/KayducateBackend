@@ -56,6 +56,9 @@ app.use("/API/contact", contactRoute);
 
 app.use("/api/tasks", taskRoute);
 
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
 
 app.listen(process.env.PORT, ()=>{
     console.log("connected to server successfully!!")
