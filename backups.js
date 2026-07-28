@@ -22,7 +22,7 @@ function sendEmail(subject, text) {
     return new Promise((resolve, reject) => {
         transporter.sendMail(
             {
-                from: process.env.SMPT_USER,
+                from: "kavyamaurya269@gmail.com",
                 to: RECIPIENT_EMAIL,
                 subject,
                 text,
