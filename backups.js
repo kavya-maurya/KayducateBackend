@@ -1,4 +1,6 @@
-require("dotenv").config();
+require("dotenv").config({
+  path: "/var/www/html/KayducateBackend/.env",
+});
 
 const { exec } = require("child_process");
 const fs = require("fs");
