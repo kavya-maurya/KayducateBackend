@@ -12,7 +12,7 @@ const BACKUP_DIR = process.env.BACKUP_DIR || "./backups";
 const RECIPIENT_EMAIL = "kavyamaurya269@gmail.com";
 
 function sendEmail(subject, text) {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    if (!process.env.SMPT_USER || !process.env.SMPT_PW) {
         logger.warn("Email credentials are not configured. Skipping notification email.");
         return Promise.resolve();
     }
@@ -20,7 +20,7 @@ function sendEmail(subject, text) {
     return new Promise((resolve, reject) => {
         transporter.sendMail(
             {
-                from: process.env.EMAIL_USER,
+                from: process.env.SMPT_USER,
                 to: RECIPIENT_EMAIL,
                 subject,
                 text,
