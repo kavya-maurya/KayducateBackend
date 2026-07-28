@@ -3,6 +3,7 @@ require("dotenv").config();
 const { exec } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const logger = require("./config/logger");
 
 const DB_NAME = process.env.DB_NAME;
 const MONGO_URI = process.env.MONGO_DB_URI;
@@ -24,6 +25,7 @@ function formatDate() {
 (async () => {
     try {
         if (!fs.existsSync(BACKUP_DIR)) {
+            logger.info(`Creating backup directory: ${BACKUP_DIR}`);
             fs.mkdirSync(BACKUP_DIR, { recursive: true });
         }
 
@@ -32,42 +34,42 @@ function formatDate() {
 
         const command = `mongodump --uri="${MONGO_URI}" --archive="${filepath}" --gzip`;
 
-        console.log("Creating backup...");
+        logger.info("Starting MongoDB backup process...");
+        logger.info(`Creating backup: ${filepath}`);
 
         exec(command, (error, stdout, stderr) => {
             if (error) {
-                console.error(error.message);
+                logger.error(`Backup failed: ${error.message}`);
                 process.exit(1);
             }
 
             if (stderr) {
-                console.log(stderr);
+                logger.info(`mongodump output: ${stderr}`);
             }
 
-            console.log("Backup created:");
-            console.log(filepath);
+            logger.info("Backup created successfully.");
+            logger.info(`Backup file: ${filepath}`);
 
             // Upload using rclone
             const upload = `rclone copy "${filepath}" gdrive:mongodb-backups`;
 
-            console.log("Uploading to Google Drive...");
+            logger.info("Uploading backup to Google Drive...");
 
             exec(upload, (err) => {
                 if (err) {
-                    console.error("Upload failed");
-                    console.error(err.message);
+                    logger.error(`Upload failed: ${err.message}`);
                     process.exit(1);
                 }
 
-                console.log("Upload completed.");
+                logger.info("Upload completed successfully.");
 
                 // Optional: Delete local backup after upload
                 fs.unlinkSync(filepath);
-                console.log("Local backup removed.");
+                logger.info(`Local backup removed: ${filepath}`);
             });
         });
 
     } catch (err) {
-        console.error(err);
+        logger.error(`Backup script failed: ${err.message}`);
     }
 })();
