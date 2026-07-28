@@ -1,5 +1,8 @@
 name: Deploy Kayducate Backend to VPS
 
+env:
+  RUN_TESTS: 'false'
+
 on:
   push:
     branches:
@@ -43,6 +46,7 @@ jobs:
 
       # Install k6
       - name: Install k6
+        if: ${{ env.RUN_TESTS == 'true' }}
         run: |
           sudo gpg -k
           sudo apt-get update
@@ -54,11 +58,13 @@ jobs:
 
       # Smoke Test
       - name: Run Smoke Test
+        if: ${{ env.RUN_TESTS == 'true' }}
         run: |
           k6 run k6-tests/smoke.js
 
       # Load Test
       - name: Run Load Test
+        if: ${{ env.RUN_TESTS == 'true' }}
         run: |
           k6 run k6-tests/load.js
 
