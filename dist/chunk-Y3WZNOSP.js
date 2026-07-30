@@ -1,0 +1,1 @@
+import{n as r,q as o,ta as a}from"./chunk-C65IRJ5V.js";var i=class t{constructor(e){this.router=e}router;canActivate(){return localStorage.getItem("user")?!0:(this.router.navigate(["/auth/login"]),!1)}static \u0275fac=function(n){return new(n||t)(o(a))};static \u0275prov=r({token:t,factory:t.\u0275fac,providedIn:"root"})};export{i as a};

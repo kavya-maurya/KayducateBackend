@@ -1,4 +1,5 @@
 require('dotenv').config()
+const path = require('path');
 const express= require ('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -19,6 +20,7 @@ const app=express();
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'dist')));
 
 
 const speedLimiter = slowDown({
@@ -56,7 +58,15 @@ app.use("/API/contact", contactRoute);
 
 app.use("/api/tasks", taskRoute);
 
+app.get(['/', '/index.html'], (req, res) => {
+
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 app.get('/health', (req, res) => {
+     console.log(__dirname);
+     console.log(path.join(__dirname, 'dist', 'index.html'));
+
     res.status(200).json({ status: 'ok' });
 });
 
