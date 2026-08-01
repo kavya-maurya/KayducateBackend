@@ -30,9 +30,45 @@ module.exports = {
 
 
 getAllContacts:async (req, res) => {
-      const user = await User.find();
-     
-       res.status(200).json({ message: user });
+      try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const sortBy = req.query.sortBy || 'createdAt';
+        const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1;
+        const search = req.query.search || '';
+
+        const query = {
+          $or: [
+            { name: { $regex: search, $options: 'i' } },
+            { email: { $regex: search, $options: 'i' } },
+            { subject: { $regex: search, $options: 'i' } },
+            { message: { $regex: search, $options: 'i' } }
+          ]
+        };
+
+        if (!search) {
+          delete query.$or;
+        }
+
+        const total = await User.countDocuments(query);
+        const contacts = await User.find(query)
+          .sort({ [sortBy]: sortOrder })
+          .skip((page - 1) * limit)
+          .limit(limit);
+
+        res.status(200).json({
+          message: contacts,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+          }
+        });
+      } catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+      }
     },
 
 getContactById:async (req, res) => {

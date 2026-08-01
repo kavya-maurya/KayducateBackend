@@ -7,11 +7,13 @@ const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const authRoutes = require('./routes/user');
 const logger = require("./config/logger");
-
+const upload = require('./config/multer');
 
 const studentRoute= require("./routes/student.route");
 const contactRoute= require("./routes/contact.route");
 const taskRoute= require("./routes/task.routes")
+const syllabusRoute= require("./routes/syllabus.routes")
+
 
 const helmet = require("helmet");
 
@@ -21,6 +23,7 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'dist')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 const speedLimiter = slowDown({
@@ -55,12 +58,26 @@ mongoose.connect(process.env.MONGO_DB_URI).then( ()=>{
 app.use("/API/student", studentRoute);
 app.use("/API/auth", authRoutes);
 app.use("/API/contact", contactRoute);
+app.use("/API/syllabus", syllabusRoute);
+
 
 app.use("/api/tasks", taskRoute);
 
 app.get(['/', '/index.html'], (req, res) => {
 
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+app.post('/upload', upload.single('file'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    res.status(200).json({
+        message: 'File uploaded successfully',
+        file: req.file.filename,
+        path: `/uploads/${req.file.filename}`
+    });
 });
 
 app.get('/health', (req, res) => {
