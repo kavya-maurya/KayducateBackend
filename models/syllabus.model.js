@@ -50,4 +50,5 @@ const syllabusSchema = new mongoose.Schema(
     timestamps: true
 });
 
+
 module.exports = mongoose.model("Syllabus", syllabusSchema);
