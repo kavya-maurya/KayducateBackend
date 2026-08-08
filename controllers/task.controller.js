@@ -33,6 +33,30 @@ exports.createTask = async (req, res) => {
   }
 };
 
+exports.getAllStudentTasks = async (req, res) => {
+
+    try {
+
+        const tasks = await Task.find()
+            .populate("student", "name email")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            tasks
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+
+    }
+
+};
+
 // Get All Tasks
 exports.getAllTasks = async (req, res) => {
   try {

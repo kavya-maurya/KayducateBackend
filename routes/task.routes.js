@@ -16,4 +16,8 @@ router.put("/:id", authMiddleware, taskController.updateTask);
 
 router.delete("/:id", authMiddleware, taskController.deleteTask);
 
+// router.get( "/admin/tasks", auth, isTeacher, taskController.getAllStudentTasks);
+router.get( "/admin/tasks", taskController.getAllStudentTasks);
+
+
 module.exports = router;
